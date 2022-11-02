@@ -71,7 +71,11 @@ const init = () => {
         // gltf.scene.scale.set(0.12, 0.2, 0.2);
 
         console.log(gltf);
-
+        let component = gltf.scene.getObjectByName('camera-hj_dg');
+        component.material=new THREE.MeshLambertMaterial({
+            color: 0xffff00,
+            emissive: 0xff0000
+        });
 
         var mroot = gltf.scene;
         const box = new THREE.Box3().setFromObject(mroot);
@@ -98,9 +102,16 @@ const init = () => {
             let intersects = raycaster.intersectObjects(gltf.scene.children, true);
 
             if (intersects.length > 0) {
-                if (global.preSelectedObjects) {
-                    global.preSelectedObjects.material = defaultMaterial;
-                }
+                console.log(intersects[0].object.name);
+                if ((intersects[0].object.name != 'Plane008') &&
+                 (intersects[0].object.name != 'Plane008_1') &&
+                 (intersects[0].object.name != 'camera-hj_dg') &&
+                 (intersects[0].object.name != 'Plane006'))
+                {
+                    console.log('------------------')
+                    if (global.preSelectedObjects) {
+                        global.preSelectedObjects.material = defaultMaterial;
+                    }
 
                 global.selectedObjects = intersects[0].object;
 
@@ -110,6 +121,9 @@ const init = () => {
                 global.selectedObjects.material = fixMaterial;
 
                 global.preSelectedObjects = global.selectedObjects;
+            } else {
+
+                }
             }
         }
 
