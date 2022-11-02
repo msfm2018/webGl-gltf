@@ -51,8 +51,13 @@ function loadGlb(
     return new Promise((res, rj) => {
         loader.load(`${modelName}`, function (gltf) {
                 console.log(gltf);
+
                 if (setCenter) {
                     gltf.scene.traverse(function (child) {
+                        if (child.isBone) {
+                            console.log(child.name);
+                            console.log('骨骼')
+                        }
                         if (setCenter && child.isMesh) {
                             child.material=stacy_mtl;
                             child.geometry.center();
