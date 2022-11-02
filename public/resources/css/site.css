@@ -1,0 +1,377 @@
+﻿@font-face {
+    font-family: 'hw3';
+    src: url('font/hw3.ttf') format('truetype'); /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+}
+
+html {
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    -webkit-user-select: none;
+    font-size: 10px;
+    height: 100%;
+    user-select: none;
+}
+
+* {
+    box-sizing: border-box;
+    outline: none;
+}
+
+body {
+    background: url('../img/background.png');
+    color: #fff;
+    font-family: hw3;
+    height: 100%;
+    margin: 0px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.bank-logo {
+    position: absolute;
+    left: 90px;
+    top: 45px;
+}
+
+button {
+    font-family: 微软雅黑;
+}
+
+/*底部面板相关*/
+.bottom-panel {
+    position: absolute;
+    bottom: 0;
+    left: 0px;
+    width: 500px;
+    height: 161px;
+    margin-left: 660px;
+    text-align: center;
+    background: transparent;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 0px 15px 8px rgba(79, 105, 92, 0.1);
+    z-index: 5;
+}
+
+.bottom-panel-btn {
+    width: 250px;
+    height: 100%;
+    vertical-align: top;
+    margin-left: -4px;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    color: rgb(131, 142, 128);
+    font-family: 微软雅黑;
+    font-size: 22px;
+    transition: background 0.6s, border-bottom 0.6s, color 0.5s;
+}
+
+.bottom-panel-btn:first-child {
+    border-radius: 20px 0 0 0;
+}
+
+.bottom-panel-btn:last-child {
+    border-radius: 0 20px 0 0;
+}
+
+
+.bottom-panel-btn .title-text {
+    display: block;
+    font-size: 6rem;
+    margin-top: 0rem;
+    transition: font-size 0.5s, margin-top 0.5s;
+}
+
+.bottom-panel-btn .content-text {
+    display: block;
+    letter-spacing: 2px;
+    font-size: 2.5rem;
+    transition: font-size 0.4s;
+}
+
+.bottom-panel-btn.active {
+    background: #3dc680;
+    border-bottom: 8px #0162b3 solid;
+    color: white;
+}
+
+.bottom-panel-btn.active .title-text {
+    font-size: 5rem;
+    margin-top: 0;
+}
+
+.bottom-panel-btn.active .content-text {
+    font-size: 3.5rem;
+}
+
+.HSplit {
+    background: linear-gradient(0, transparent 5%, rgb(180, 180, 180), transparent 95%);
+    border: none;
+    display: inline-block;
+    height: 100%;
+    width: 1px;
+    margin-left: -4px;
+    vertical-align: top;
+}
+.display_none {
+    display: none;
+}
+
+/*==========================================*/
+.right-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 330px;
+    height: 100%;
+    overflow: hidden;
+    padding-top: 3rem;
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0px 15px 8px rgba(79, 105, 92, 0.1);
+    z-index: 5;
+}
+
+/*右面 button 样式*/
+.btn-style {
+    width: 100%;
+    height: 110px;
+    padding: 0;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    vertical-align: top;
+    white-space: nowrap;
+
+    background: transparent;
+    border: none;
+    border-right: 0px #469ae0 solid;
+    color: rgb(131, 142, 128);
+    font-family: 微软雅黑;
+    font-size: 2.7rem;
+    transition: background 0.5s, border-right 0.3s;
+}
+
+
+.btn-style.active {
+    background: radial-gradient(at 50% 0, rgba(255, 255, 255, 1), transparent);
+    border-right: 8px #469ae0 solid;
+    color: #469ae0;
+    font-size: 2.7rem;
+}
+
+.btn-style:before {
+    /*横线*/
+    position: relative;
+    top: -37px;
+    width: 100%;
+    height: 1px;
+    display: block;
+    background: linear-gradient(90deg, transparent 5%, rgb(180, 180, 180), transparent 95%);
+    content: "";
+}
+
+.btn-style i {
+    margin-left: 3rem;
+    margin-right: 2rem;
+}
+
+.内容区 {
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0);
+    border-right: 0px #469ae0 solid;
+    color: transparent;
+    font-size: 2rem;
+    padding: 0rem 2.5rem;
+    transform: scaleY(0) translateX(100%);
+    transition: all 0.4s;
+
+}
+
+.内容区.active {
+    background: radial-gradient(at 50% 100%, rgba(255, 255, 255, 1), transparent);
+    border-right: 8px #1a92c6 solid;
+    color: rgb(86, 102, 81);
+    height: auto;
+    padding: 0.5rem 2.5rem;
+    transform: scaleY(1)    translateX(0%);
+}
+
+.内容区 .收起 {
+    color: #469ae0;
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+}
+
+.内容区 span i {
+    margin-right: 1rem;
+}
+
+
+/*附近网点*/
+@keyframes mymove {
+    from {
+        transform: scale(0.2) translateX(1000px);
+    }
+    to {
+        transform: scale(1) translateX(0px);
+    }
+}
+
+.nearby-map-panel {
+    position: absolute;
+    top: 11%;
+    left: 9%;
+    width: 60.44%;
+    height: 700px;
+    display: none;
+    z-index: 5;
+
+    animation: mymove 0.3s both;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0px 15px 8px rgba(79, 105, 92, 0.1);
+    color: rgb(86, 86, 86);
+}
+
+
+.nearby-map-panel .title-bar {
+    width: 100%;
+    height: 57px;
+    line-height: 57px;
+    padding-left: 20px;
+    border-bottom: rgb(220, 220, 220) 1px solid;
+}
+
+.title-bar .title {
+    font-size: 2.8rem;
+    margin-right: 15px;
+}
+
+.title-bar .btn我的位置 {
+    float: right;
+    background: rgb(255, 157, 3);
+    border: none;
+    border-radius: 0 10px 0 0;
+    color: white;
+
+    font-size: 2rem;
+    height: 100%;
+    padding: 0 1rem;
+}
+
+.btn我的位置:active {
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.title-bar .sub-title {
+    display: inline-block;
+    font-size: 2.2rem;
+    margin-right: 15px;
+}
+
+.title-bar .contanct {
+    font-size: 2.2rem;
+}
+
+
+.title-bar .tel {
+    color: rgb(0, 128, 255);
+}
+
+.nearby-map-panel .map-bar {
+    display: none;
+    height: calc(100% - 57px);
+    overflow: hidden;
+    width: 100%;
+}
+
+.map-bar .map-img {
+    width: 100%;
+    border-radius: 0 0 10px 10px;
+}
+
+.nearby-map-panel .map-all-bar {
+    background: url("../img/maps/map-all.png") no-repeat;
+    /*background: url("../img/maps/map-all.png") ;*/
+    /*background-size: contain;*/
+    height: calc(100% - 57px);
+    overflow: hidden;
+    width: 100%;
+    border-radius: 0 0 10px 10px;
+}
+
+
+/*首页   导览  还原 按钮style*/
+.btn-reset {
+    position: absolute;
+    left: 1366px;
+    top: 0px;
+    height: 63px;
+    width: 140px;
+
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border: rgba(255, 255, 255, 0.5) 1px solid;
+    border-radius: 0 0 15px 15px;
+    border-top: none;
+    box-shadow: 0 0 15px rgba(79, 105, 92, 0.1);
+    color: #469ae0;
+    font-size: 3rem;
+    z-index: 5;
+}
+
+.btn-reset:active {
+    background: rgb(255, 157, 3);
+    color: white;
+}
+
+.btn-reset i {
+    padding-right: 1rem;
+}
+/*上移 立体感*/
+.btn-reset.silde-up {
+    transform: translateY(-65px);
+}
+
+
+
+
+.btn-2d {
+    left: 1066px !important;
+    width: 140px;
+}
+
+.btn-3d {
+    left: 1216px !important;
+    width: 140px;
+}
+
+
+.背景图 {
+    background: url('../img/f1.png') no-repeat;
+    background-size: 100% 100%;
+
+    position: relative;
+    margin-top: 150px;
+    height: 760px;
+    width: 1580px;
+}
+
+
+/*3d 左边2d蒙版隐藏 canvas 展现*/
+.m3d .m2d-midMaskPanel-hide {
+    opacity: 0;
+    display: none;
+}
+
+
+/*2d 左边3D canvas隐藏*/
+.m2d canvas {
+    opacity: 0;
+    display: none;
+}
+
