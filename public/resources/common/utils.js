@@ -1,6 +1,3 @@
-// const dracoLoader = new DRACOLoader();
-// 		dracoLoader.setDecoderPath( 'three/examples/js/libs/draco/gltf/' );
-// 		dracoLoader.setDecoderConfig( { type: 'js' } );
 import * as THREE from "three";
 
 import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
@@ -31,6 +28,19 @@ function loadGlb(
     } else {
         positionVec3 = new THREE.Vector3(position.x, position.y, position.z);
     }
+
+    let stacy_txt = new THREE.TextureLoader().load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/1376484/stacy.jpg');
+
+    stacy_txt.flipY = false; // we flip the texture so that its the right way up
+
+    const stacy_mtl = new THREE.MeshPhongMaterial({
+        map: stacy_txt,
+        color: 0xffffff,
+        skinning: true
+    });
+
+
+
     let dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath(`./${path}/draco/`); // 设置public下的解码路径，注意最后面的/
     dracoLoader.setDecoderConfig({type: "js"}); //使用兼容性强的draco_decoder.js解码器
@@ -44,6 +54,7 @@ function loadGlb(
                 if (setCenter) {
                     gltf.scene.traverse(function (child) {
                         if (setCenter && child.isMesh) {
+                            child.material=stacy_mtl;
                             child.geometry.center();
                         }
                     });
