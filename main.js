@@ -2,7 +2,7 @@ import * as THREE from "three";
 import gsap from "gsap";
 import * as dat from "dat.gui";
 import {loadGlb, WxpKeyPressed1, processing, frameArea} from "./public/resources/common/utils.js";
-import {Control, Light, Base,floor} from "./public/resources/common/base.js";
+import {Control, Light, Base, floor} from "./public/resources/common/base.js";
 import global from "./public/resources/common/global.js";
 import Vglobal from "./public/resources/common/vglobal.js";
 
@@ -16,7 +16,7 @@ const init = () => {
     [vg.camera, vg.controls] = Control(vg.renderer, vg.scene);
     Light(vg.scene)
 
-    window.addEventListener('keydown', (event) => WxpKeyPressed1(event, renderer), false);
+    window.addEventListener('keydown', (event) => WxpKeyPressed1(event, vg.renderer), false);
 
 
     let glb = loadGlb('model', "CheJian.glb", false, 1, 0);
@@ -143,11 +143,61 @@ const init = () => {
         vg.renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
+    document.body.addEventListener('dblclick', onDocumentMouseDown, true);
+
+    function onDocumentMouseDown(event) {
+        event.preventDefault();
+        var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
+
+        vector = vector.unproject(vg.camera);
+
+        var raycaster = new THREE.Raycaster(vg.camera.position, vector.sub(vg.camera.position).normalize());
+
+        var intersects = raycaster.intersectObjects(vg.scene.children, true);
+        var currObj = intersects[0].object;//currObj为点击到的第一个对象
+
+        if (currObj.name == '016') {
+            console.log('mem' + currObj.parent);//currObj.parent是menGroup
+            var p1 = new THREE.Vector3(currObj.parent.position);
+            {
+                vg.controls.target = new THREE.Vector3(
+                    currObj.position.x,
+                    currObj.position.y,
+                    currObj.position.z
+                );
+
+                gsap.to(vg.camera.position, {
+                    x: currObj.position.x + 25,
+                    y: currObj.position.y + 40,
+                    z: currObj.position.z,
+                    duration: 2,
+                });
+            }
+            // } else   if (currObj.name == '08_1') {
+        } else if (currObj.name == 'Plane008_1') {
+            {
+                vg.controls.target = new THREE.Vector3(
+                    currObj.position.x,
+                    currObj.position.y,
+                    currObj.position.z
+                );
+
+                gsap.to(vg.camera.position, {
+                    x: currObj.position.x + 25,
+                    y: currObj.position.y + 40,
+                    z: currObj.position.z,
+                    duration: 2,
+                });
+            }
+        }
+
+    }
 
 }
 // Function - Opening rotate
 let initRotate = 0;
 var loaded = false;
+
 function initialRotation() {
     initRotate++;
     if (initRotate <= 120) {
@@ -156,6 +206,7 @@ function initialRotation() {
         loaded = true;
     }
 }
+
 const render = (time) => {
 
     vg.controls.update();
@@ -167,6 +218,7 @@ const render = (time) => {
         initialRotation();
         // DRAG_NOTICE.classList.add('start');
     }
+    // requestAnimationFrame(render);
 }
 
 window.addEventListener("DOMContentLoaded", () => {

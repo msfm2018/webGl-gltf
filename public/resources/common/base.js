@@ -28,13 +28,13 @@ function Control(renderer, scene) {
 
     // controls.enableZoom = true;
 
-    controls.maxPolarAngle = Math.PI / 2;
-    controls.minPolarAngle = Math.PI / 3;
-    controls.enableDamping = true;
-    controls.enablePan = false;
-    controls.dampingFactor = 0.1;
-    controls.autoRotate = false; // Toggle this if you'd like the chair to automatically rotate
-    controls.autoRotateSpeed = 0.2; // 30
+    // controls.maxPolarAngle = Math.PI / 2;
+    // controls.minPolarAngle = Math.PI / 3;
+    // controls.enableDamping = true;
+    // controls.enablePan = false;
+    // controls.dampingFactor = 0.1;
+    // controls.autoRotate = false; // Toggle this if you'd like the chair to automatically rotate
+    // controls.autoRotateSpeed = 0.2; // 30
 
     return [camera, controls];
 }
