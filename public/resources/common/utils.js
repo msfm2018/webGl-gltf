@@ -8,14 +8,14 @@ import {RenderPass} from "three/addons/postprocessing/RenderPass.js";
 import {OutlinePass} from "three/addons/postprocessing/OutlinePass.js";
 import {ShaderPass} from "three/addons/postprocessing/ShaderPass.js";
 import {FXAAShader} from "three/addons/shaders/FXAAShader.js";
+import global from "./global.js";
 
-function loadGlb(
-    path,
-    modelName,
-    setCenter,
-    scale,
-    position,
-    rotation
+function loadGlb(path,
+                 modelName,
+                 setCenter,
+                 scale,
+                 position,
+                 rotation
 ) {
     let scaleVec3, positionVec3;
     if (typeof scale == "number") {
@@ -29,6 +29,27 @@ function loadGlb(
         positionVec3 = new THREE.Vector3(position.x, position.y, position.z);
     }
 
+// Initial material
+    const INITIAL_MTL = new THREE.MeshPhongMaterial({color: 0xf1f1f1, shininess: 10});
+
+    const INITIAL_MAP = [
+        // {childID: "Plane008", mtl: INITIAL_MTL},
+        // {childID: "Plane008_1", mtl: INITIAL_MTL},
+        {childID: "camera-hj_dg", mtl: INITIAL_MTL},
+        {childID: "Plane006", mtl: INITIAL_MTL},
+        {childID: "supports", mtl: INITIAL_MTL}];
+
+    function initColor(parent, type, mtl) {
+        parent.traverse(o => {
+            if (o.isMesh) {
+                if (o.name.includes(type)) {
+                    o.material = mtl;
+                    o.nameID = type; // Set a new property to identify this object
+                }
+            }
+        });
+    }
+
     let stacy_txt = new THREE.TextureLoader().load('https://s3-us-west-2.amazonaws.com/s.cdpn.io/1376484/stacy.jpg');
 
     stacy_txt.flipY = false; // we flip the texture so that its the right way up
@@ -38,7 +59,6 @@ function loadGlb(
         color: 0xffffff,
         skinning: true
     });
-
 
 
     let dracoLoader = new DRACOLoader();
@@ -51,33 +71,41 @@ function loadGlb(
     return new Promise((res, rj) => {
         loader.load(`${modelName}`, function (gltf) {
                 console.log(gltf);
+                let theModel = gltf.scene;
+                global.theModel=theModel;
+                theModel.rotation.y = Math.PI * 2;
+
+                // Set initial textures
+                for (let object of INITIAL_MAP) {
+                    initColor(theModel, object.childID, object.mtl);
+                }
 
                 if (setCenter) {
-                    gltf.scene.traverse(function (child) {
-                        if (child.isBone) {
-                            console.log(child.name);
+                    theModel.traverse(function (o) {
+                        if (o.isBone) {
+                            console.log(o.name);
                             console.log('骨骼')
                         }
-                        if (setCenter && child.isMesh) {
-                            child.material=stacy_mtl;
-                            child.geometry.center();
+                        if (setCenter && o.isMesh) {
+                            //加载材质
+                            o.material = stacy_mtl;
+                            o.geometry.center();
                         }
                     });
                 }
 
-                gltf.scene.scale.copy(scaleVec3);
-                gltf.scene.position.copy(positionVec3);
+                theModel.scale.copy(scaleVec3);
+                theModel.position.copy(positionVec3);
                 if (rotation) {
-                    gltf.scene.rotation.copy(rotation);
+                    theModel.rotation.copy(rotation);
                 }
-                // scene.add(gltf.scene);
+                // scene.add(theModel);
                 res(gltf);
                 // gltf = null;
-            },// called as loading progresses
+            },
             function (xhr) {
                 console.log((xhr.loaded / xhr.total * 100) + '% loaded');
             },
-            // called when loading has errors
             function (error) {
 
                 console.log('An error happened');
@@ -143,6 +171,7 @@ function processing(scene, camera, renderer) {
     composer.addPass(effectFXAA);
     return [composer, outlinePass];
 }
+
 function frameArea(sizeToFitOnScreen, boxSize, boxCenter, camera) {
     const halfSizeToFitOnScreen = sizeToFitOnScreen * 0.5;
     const halfFovY = THREE.MathUtils.degToRad(camera.fov * .5);
@@ -168,4 +197,7 @@ function frameArea(sizeToFitOnScreen, boxSize, boxCenter, camera) {
     // point the camera to look at the center of the box
     camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
 }
-export {loadGlb, WxpKeyPressed1, processing,frameArea}
+
+
+
+export {loadGlb, WxpKeyPressed1, processing, frameArea}

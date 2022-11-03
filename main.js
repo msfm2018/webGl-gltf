@@ -1,47 +1,20 @@
 import * as THREE from "three";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-
-
 import gsap from "gsap";
 import * as dat from "dat.gui";
-import {loadGlb, WxpKeyPressed1, processing,frameArea} from "./public/resources/common/utils.js";
-import {Control, Light, Base} from "./public/resources/common/base.js";
+import {loadGlb, WxpKeyPressed1, processing, frameArea} from "./public/resources/common/utils.js";
+import {Control, Light, Base,floor} from "./public/resources/common/base.js";
 import global from "./public/resources/common/global.js";
+import Vglobal from "./public/resources/common/vglobal.js";
 
-let controls;
-let renderer;
-let scene;
-let camera;
-let mixer;
-let composer, effectFXAA, outlinePass;
 
-let selectedObjectsArr = [];
-// 创建投射光线对象
-const raycaster = new THREE.Raycaster();
-
-// 鼠标的位置对象
-const mouse = new THREE.Vector2();
-const clock = new THREE.Clock();
-
-let defaultMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
-});
-
-let fixMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xffff00,
-    metalness: 0.6,
-    roughness: 0.4,
-    clearcoat: 0.05,
-    clearcoatRoughness: 0.05
-})
-
+let vg = new Vglobal();
 const init = () => {
 
-    [renderer, scene] = Base(render)
-    document.body.appendChild(renderer.domElement);
+    [vg.renderer, vg.scene] = Base(render)
+    document.body.appendChild(vg.renderer.domElement);
 
-    [camera, controls] = Control(renderer, scene);
-    Light(scene)
+    [vg.camera, vg.controls] = Control(vg.renderer, vg.scene);
+    Light(vg.scene)
 
     window.addEventListener('keydown', (event) => WxpKeyPressed1(event, renderer), false);
 
@@ -50,8 +23,8 @@ const init = () => {
     glb.then(gltf => {
         // setModelPosition(gltf.scene);
         console.log(gltf);
-        mixer = new THREE.AnimationMixer(gltf.scene);
-        var AnimationAction = mixer.clipAction(gltf.animations[0]);
+        vg.mixer = new THREE.AnimationMixer(gltf.scene);
+        var AnimationAction = vg.mixer.clipAction(gltf.animations[0]);
         AnimationAction.timeScale = 0.7; //默认1，可以调节播放速度
         // AnimationAction.loop = THREE.LoopOnce; //不循环播放
         AnimationAction.clampWhenFinished = true;//暂停在最后一帧播放的状态
@@ -62,17 +35,15 @@ const init = () => {
                 obj.receiveShadow = true;
 
                 if (obj.name.indexOf('Plane') < 0) {
-                    obj.material = defaultMaterial
+                    obj.material = vg.defaultMaterial
                 }
 
             }
         })
 
-        // gltf.scene.scale.set(0.12, 0.2, 0.2);
-
-        console.log(gltf);
+        //某一个部件改变外观
         let component = gltf.scene.getObjectByName('camera-hj_dg');
-        component.material=new THREE.MeshLambertMaterial({
+        component.material = new THREE.MeshLambertMaterial({
             color: 0xffff00,
             emissive: 0xff0000
         });
@@ -84,44 +55,40 @@ const init = () => {
         const boxCenter = box.getCenter(new THREE.Vector3());
 
         // set the camera to frame the box
-        frameArea(boxSize * 0.6, boxSize, boxCenter, camera);
+        frameArea(boxSize * 0.6, boxSize, boxCenter, vg.camera);
 
 
-
-
-        scene.add(mroot);
+        vg.scene.add(mroot);
 
         document.body.addEventListener('click', selectHandler, false);
 
         function selectHandler(ev) {
-            mouse.x = (ev.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(ev.clientY / window.innerHeight) * 2 + 1;
+            vg.mouse.x = (ev.clientX / window.innerWidth) * 2 - 1;
+            vg.mouse.y = -(ev.clientY / window.innerHeight) * 2 + 1;
 
-            raycaster.setFromCamera(mouse, camera);
+            vg.raycaster.setFromCamera(vg.mouse, vg.camera);
 
-            let intersects = raycaster.intersectObjects(gltf.scene.children, true);
+            let intersects = vg.raycaster.intersectObjects(gltf.scene.children, true);
 
             if (intersects.length > 0) {
                 console.log(intersects[0].object.name);
                 if ((intersects[0].object.name != 'Plane008') &&
-                 (intersects[0].object.name != 'Plane008_1') &&
-                 (intersects[0].object.name != 'camera-hj_dg') &&
-                 (intersects[0].object.name != 'Plane006'))
-                {
-                    console.log('------------------')
+                    (intersects[0].object.name != 'Plane008_1') &&
+                    (intersects[0].object.name != 'camera-hj_dg') &&
+                    (intersects[0].object.name != 'Plane006')) {
                     if (global.preSelectedObjects) {
-                        global.preSelectedObjects.material = defaultMaterial;
+                        global.preSelectedObjects.material = vg.defaultMaterial;
                     }
 
-                global.selectedObjects = intersects[0].object;
+                    global.selectedObjects = intersects[0].object;
 
-                selectedObjectsArr = [];
-                selectedObjectsArr.push(global.selectedObjects);
-                outlinePass.selectedObjects = selectedObjectsArr;
-                global.selectedObjects.material = fixMaterial;
+                    let tmp = [];
+                    tmp.push(global.selectedObjects);
+                    vg.outlinePass.selectedObjects = tmp;
+                    global.selectedObjects.material = vg.fixMaterial;
 
-                global.preSelectedObjects = global.selectedObjects;
-            } else {
+                    global.preSelectedObjects = global.selectedObjects;
+                } else {
 
                 }
             }
@@ -131,14 +98,14 @@ const init = () => {
         btn1.addEventListener('click', evt => {
 
             global.selectedObjects.material = new THREE.MeshPhysicalMaterial({
-                color: 0xffff00, metalness: 1, roughness:1, clearcoat: 0.05, clearcoatRoughness: 0.05
+                color: 0xffff00, metalness: 1, roughness: 1, clearcoat: 0.05, clearcoatRoughness: 0.05
             })
         });
 
+        //换皮肤颜色
         let btn2 = document.querySelector('#btn2');
         btn2.addEventListener('click', evt => {
-            if(global.obj[global.selectedObjects.name]) {
-                console.log(global.obj[global.selectedObjects.name])
+            if (global.obj[global.selectedObjects.name]) {
                 gsap.to(global.selectedObjects.position, {y: global.obj[global.selectedObjects.name].y, duration: 2,});
                 delete global.obj[global.selectedObjects.name];
                 global.selectedObjects.material = new THREE.MeshPhysicalMaterial({
@@ -150,51 +117,55 @@ const init = () => {
         let btn3 = document.querySelector('#btn3');
         btn3.addEventListener('click', evt => {
 
-            if(! global.obj[global.selectedObjects.name]){
-            let vv = global.selectedObjects.clone();
-            global.obj[global.selectedObjects.name] = vv.position;
-            gsap.to(global.selectedObjects.position, {y: 16, duration: 2,});
-            // gsap.to(global.selectedObjects.position, { y: 16,  duration: 2, yoyo: true, repeat: -1 });
-            global.selectedObjects.material = new THREE.MeshPhysicalMaterial({
-                color: 0xffff00, metalness: 0.6, roughness: 0.4, clearcoat: 0.05, clearcoatRoughness: 0.05
-            })
-            }else
-            {
+            if (!global.obj[global.selectedObjects.name]) {
+                let vv = global.selectedObjects.clone();
+                global.obj[global.selectedObjects.name] = vv.position;
+                gsap.to(global.selectedObjects.position, {y: 16, duration: 2,});
+                // gsap.to(global.selectedObjects.position, { y: 16,  duration: 2, yoyo: true, repeat: -1 });
+                global.selectedObjects.material = new THREE.MeshPhysicalMaterial({
+                    color: 0xffff00, metalness: 0.6, roughness: 0.4, clearcoat: 0.05, clearcoatRoughness: 0.05
+                })
+            } else {
                 console.log('----')
             }
 
         });
     });
 
-    [composer, outlinePass] = processing(scene, camera, renderer);
+    [vg.composer, vg.outlinePass] = processing(vg.scene, vg.camera, vg.renderer);
 
 
-    let floorGeometry = new THREE.PlaneGeometry(5000, 5000, 1);
-    let floorMaterial = new THREE.MeshPhongMaterial({
-        color: 0x77F28F,
-        shininess: 0,
-    });
-    let floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    floor.rotation.x = -0.5 * Math.PI;
-    floor.position.y = -2.1;
-    floor.receiveShadow = true;
-    scene.add(floor);
-
+    floor(vg.scene);
 
     window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        vg.camera.aspect = window.innerWidth / window.innerHeight;
+        vg.camera.updateProjectionMatrix();
+        vg.renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
 
 }
+// Function - Opening rotate
+let initRotate = 0;
+var loaded = false;
+function initialRotation() {
+    initRotate++;
+    if (initRotate <= 120) {
+        global.theModel.rotation.y += Math.PI / 60;
+    } else {
+        loaded = true;
+    }
+}
 const render = (time) => {
 
-    controls.update();
-    composer.render();
-    if (mixer) {
-        mixer.update(clock.getDelta());
+    vg.controls.update();
+    vg.composer.render();
+    if (vg.mixer) {
+        vg.mixer.update(vg.clock.getDelta());
+    }
+    if (global.theModel != null && loaded == false) {
+        initialRotation();
+        // DRAG_NOTICE.classList.add('start');
     }
 }
 

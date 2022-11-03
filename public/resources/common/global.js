@@ -1,5 +1,5 @@
 
-let selectedObjects, preSelectedObjects;
+// let selectedObjects, preSelectedObjects;
 
 class global{
 
@@ -9,6 +9,6 @@ class global{
 
     static  obj={};
 
-
+static theModel;
 }
 export  default  global;

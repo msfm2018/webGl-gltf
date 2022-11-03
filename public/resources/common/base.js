@@ -25,11 +25,17 @@ function Control(renderer, scene) {
     // camera.position.set(0, 6, 0);
     scene.add(camera);
     let controls = new OrbitControls(camera, renderer.domElement);
+
+    // controls.enableZoom = true;
+
+    controls.maxPolarAngle = Math.PI / 2;
+    controls.minPolarAngle = Math.PI / 3;
     controls.enableDamping = true;
     controls.enablePan = false;
-    // controls.maxPolarAngle = Math.PI /1;
-    // controls.minPolarAngle = Math.PI / 1;
-    controls.enableZoom = true;
+    controls.dampingFactor = 0.1;
+    controls.autoRotate = false; // Toggle this if you'd like the chair to automatically rotate
+    controls.autoRotateSpeed = 0.2; // 30
+
     return [camera, controls];
 }
 
@@ -65,4 +71,16 @@ function Light(scene) {
     scene.add(spotLight, ambientLight);
 }
 
-export {Control, Light, Base}
+function floor(scene) {
+    let floorGeometry = new THREE.PlaneGeometry(5000, 5000, 1);
+    let floorMaterial = new THREE.MeshPhongMaterial({
+        color: 0x77F28F,
+        shininess: 0,
+    });
+    let floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.rotation.x = -0.5 * Math.PI;
+    floor.position.y = -2.1;
+    floor.receiveShadow = true;
+    scene.add(floor);
+}
+export {Control, Light, Base,floor}
