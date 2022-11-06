@@ -375,3 +375,13 @@ button {
     display: none;
 }
 
+#show1 {
+    position: absolute;
+    padding: 1px;
+    background: rgba(255, 255, 255, 0.6);
+    line-height: 1;
+    border-radius: 0px;
+    /* transition: true; */
+    opacity: 1;
+    display: none;
+  }
