@@ -16,7 +16,7 @@ class Vglobal {
     composer;
     let
     effectFXAA
-    ;
+        ;
     let
     outlinePass;
 
@@ -24,7 +24,7 @@ class Vglobal {
     let
     raycaster = new THREE.Raycaster();
 
-// 鼠标的位置对象
+    // 鼠标的位置对象
     const
     mouse = new THREE.Vector2();
     const

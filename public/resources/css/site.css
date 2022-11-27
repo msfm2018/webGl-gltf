@@ -19,7 +19,7 @@ html {
 }
 
 body {
-    background: url('../img/background.png');
+    /* background: url('../img/background.png'); */
     color: #fff;
     font-family: hw3;
     height: 100%;

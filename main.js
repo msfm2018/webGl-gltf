@@ -6,15 +6,33 @@ import { Control, Light, Base, floor } from "./public/resources/common/base.js";
 import global from "./public/resources/common/global.js";
 import Vglobal from "./public/resources/common/vglobal.js";
 
+import {  makePerson } from "./public/resources/common/tips.js"
+
 
 let vg = new Vglobal();
 
-//点击提示
+
 let show1;
+const list = [
+
+    {
+        position: { x: 40, y: 15, z: 15 },
+        content: `湿度${random()}℃，${random()}Pa`
+    },
+    {
+        position: { x: -7, y: 14, z: -9 },
+        content: `室温：${random()}℃，${random()}Pa`
+    },
+    {
+        position: { x: 2, y: 15, z: 16 },
+        content: `${random()}℃，${random()}Pa`
+    }
+]
+function random() {
+    return Math.ceil(Math.random() * 1000);
+}
 
 const init = () => {
-
-
 
 
     [vg.renderer, vg.scene] = Base(render)
@@ -27,8 +45,8 @@ const init = () => {
 
 
     let glb = loadGlb('model', "CheJian.glb", false, 1, 0);
-    glb.then(gltf => {
 
+    glb.then(gltf => {
 
         vg.mixer = new THREE.AnimationMixer(gltf.scene);
         var AnimationAction = vg.mixer.clipAction(gltf.animations[0]);
@@ -47,6 +65,22 @@ const init = () => {
 
             }
         })
+
+        //标注 
+        list.forEach(item => {
+            vg.scene.add(makePerson(item.position, item.content, 120, 20));
+        })
+
+        setInterval(() => {
+            list.forEach(item => {
+                item.content = `溫度${Math.ceil(Math.random() * 1000)}℃`;
+                vg.scene.add(makePerson(item.position, item.content, 120, 20));
+            })
+        }, 1000)
+
+
+
+
 
         //某一个部件改变外观
         let component = gltf.scene.getObjectByName('camera-hj_dg');
@@ -110,8 +144,8 @@ const init = () => {
                     global.selectedObjects.material = vg.fixMaterial;
 
                     global.preSelectedObjects = global.selectedObjects;
-    //  //准备显示
-    //  show1 = document.querySelector('#show1');
+                    //  //准备显示
+                    //  show1 = document.querySelector('#show1');
                     //找到删除 避免重复
                     var el = document.getElementById('login');
                     if (el)
@@ -124,7 +158,7 @@ const init = () => {
                     link.setAttribute('href', '#');
                     link.setAttribute('id', 'login');
                     link.style.color = 'green';
-                    link.innerHTML = '登录';
+                    link.innerHTML = '谷歌计划裁员上万人:'+global.selectedObjects.name;
                     show1.appendChild(link);
 
                     // document.querySelector("#info").innerText="选中："+intersects[0].object.name;
